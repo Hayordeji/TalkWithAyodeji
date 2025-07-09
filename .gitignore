@@ -101,6 +101,32 @@ StyleCopReport.xml
 # Chutzpah Test files
 _Chutzpah*
 
+# Build artifacts
+bin/
+obj/
+out/
+
+
+# Configuration files
+appsettings.json
+appsettings.*.json
+
+# Visual Studio
+.vs/
+*.vscode/
+
+# Environment files
+*.env
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.tlog
+
+
 # Visual C++ cache files
 ipch/
 *.aps
