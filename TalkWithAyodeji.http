@@ -1,0 +1,6 @@
+@TalkWithAyodeji_HostAddress = http://localhost:5089
+
+GET {{TalkWithAyodeji_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
