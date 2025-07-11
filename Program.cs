@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TalkWithAyodeji.Data.DatabaseObject;
+using TalkWithAyodeji.Hubs;
 using TalkWithAyodeji.Repository.Data;
 using TalkWithAyodeji.Repository.Seeder;
 using TalkWithAyodeji.Repository.Seeder.Seed;
