@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using TalkWithAyodeji.Data.DatabaseObject;
 using TalkWithAyodeji.Service;
+using TalkWithAyodeji.Service.Interface;
 
 namespace TalkWithAyodeji.Hubs
 {
