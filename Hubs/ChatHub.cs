@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using TalkWithAyodeji.Data.DatabaseObject;
-using TalkWithAyodeji.Service;
+using TalkWithAyodeji.Service.Interface;
 
 namespace TalkWithAyodeji.Hubs
 {
@@ -22,8 +22,8 @@ namespace TalkWithAyodeji.Hubs
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", question, Context.ConnectionId);
             _logger.LogInformation($"User asked the chatbot a question : {question}");
 
-            //GET RESPONSE FROM AI
 
+            //GET RESPONSE FROM AI
             var response = await _aiClient.AskAI(question, Context.ConnectionId);
             _logger.LogInformation($"Chatbot response: {response}");
 
