@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TalkWithAyodeji.Data.DatabaseObject;
+using TalkWithAyodeji.Hubs;
 using TalkWithAyodeji.Repository.Data;
 using TalkWithAyodeji.Repository.Seeder;
 using TalkWithAyodeji.Repository.Seeder.Seed;
@@ -110,7 +111,7 @@ using (var serviceScope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapHub<ChatHub>("https://talkwithayodeji.onrender.com/chat");
 app.MapControllers();
 
 app.Run();

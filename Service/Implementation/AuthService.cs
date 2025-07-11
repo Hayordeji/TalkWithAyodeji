@@ -33,7 +33,7 @@ namespace TalkWithAyodeji.Service.Implementation
 
                 if (user == null)
                 {
-                    return ApiResponseDto<NewUserDto>.ErrorResponse("User not found...",default,default);
+                    return ApiResponseDto<NewUserDto>.ErrorResponse("Admin not found...",default,default);
                 }
                 var result = _signInManager.CheckPasswordSignInAsync(user, loginDto.Password,false);
                 if (!result.Result.Succeeded)
