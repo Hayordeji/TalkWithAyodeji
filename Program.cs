@@ -127,7 +127,7 @@ app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<ChatHub>("https://talkwithayodeji.onrender.com/chat");
+app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 app.Run();
