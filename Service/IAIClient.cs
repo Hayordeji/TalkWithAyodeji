@@ -1,4 +1,4 @@
-﻿namespace TalkWithAyodeji.Service.Interface
+﻿namespace TalkWithAyodeji.Service
 {
     public interface IAIClient
     {
