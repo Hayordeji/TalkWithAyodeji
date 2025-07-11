@@ -30,9 +30,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
-////LOCAL DATABASE
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("Postgres")));
+
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
