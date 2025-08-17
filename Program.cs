@@ -49,6 +49,8 @@ builder.Services.AddScoped<IAdminSeed,AdminSeed>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
+
+
 ////LOCAL DATABASE
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("Postgres")));

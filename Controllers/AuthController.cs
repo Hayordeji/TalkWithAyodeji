@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TalkWithAyodeji.Data.DatabaseObject;
 using TalkWithAyodeji.Service.Dto.Auth;
+using TalkWithAyodeji.Service.Dto.Response;
 using TalkWithAyodeji.Service.Interface;
 
 namespace TalkWithAyodeji.Controllers
@@ -37,12 +38,20 @@ namespace TalkWithAyodeji.Controllers
         [HttpGet("admin/test")]
         public async Task<IActionResult> TestAdminExist()
         {
-            var user = await _userManager.FindByEmailAsync("MOLEFOX6@GMAIL.COM");
-            if (user == null)
+            try
             {
-                return BadRequest("User does not exist");
+                var user = await _userManager.FindByEmailAsync("MOLEFOX6@GMAIL.COM");
+                if (user == null)
+                {
+                    return BadRequest(ApiResponseDto<string>.ErrorResponse("Test failed", default));
+                }
+                return Ok(ApiResponseDto<string>.SuccessResponse("Test successful","User exists"));
             }
-            return Ok("User exists");
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"An unexpected error occured :{ex.Message}");
+            }
 
         }
     }
