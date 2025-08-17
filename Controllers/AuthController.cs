@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TalkWithAyodeji.Data.DatabaseObject;
 using TalkWithAyodeji.Service.Dto.Auth;
 using TalkWithAyodeji.Service.Interface;
 
@@ -10,9 +12,11 @@ namespace TalkWithAyodeji.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly UserManager<AppUser> _userManager;
+        public AuthController(IAuthService authService, UserManager<AppUser> userManager)
         {
             _authService = authService;
+            _userManager = userManager;
         }
 
         [HttpPost("admin/login")]
@@ -29,6 +33,17 @@ namespace TalkWithAyodeji.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpGet("admin/test")]
+        public async Task<IActionResult> TestAdminExist()
+        {
+            var user = await _userManager.FindByEmailAsync("MOLEFOX6@GMAIL.COM");
+            if (user == null)
+            {
+                return BadRequest("User does not exist");
+            }
+            return Ok("User exists");
+
+        }
     }
 }
-    
