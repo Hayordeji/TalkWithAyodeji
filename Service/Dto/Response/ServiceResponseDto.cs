@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace TalkWithAyodeji.Service.Dto.Response
 {
-    public class ApiResponseDto<T>
+    public class ServiceResponseDto<T>
     {
         public bool Success { get; set; }
         public string Message { get; set; }
         public T Data { get; set; }
         public string Errors { get; set; }
 
-        public ApiResponseDto(bool success, string message, T data, string errors = null)
+        public ServiceResponseDto(bool success, string message, T data, string errors = null)
         {
             Success = success;
             Message = message;
@@ -21,14 +21,14 @@ namespace TalkWithAyodeji.Service.Dto.Response
             Errors = errors ?? errors;
         }
 
-        public static ApiResponseDto<T> SuccessResponse(string message, T data)
+        public static ServiceResponseDto<T> SuccessResponse(string message, T data)
         {
-            return new ApiResponseDto<T>(true, message, data);
+            return new ServiceResponseDto<T>(true, message, data);
         }
 
-        public static ApiResponseDto<T> ErrorResponse(string message,T data, string errors = null)
+        public static ServiceResponseDto<T> ErrorResponse(string message,T data, string errors = null)
         {
-            return new ApiResponseDto<T>(false, message, data, errors);
+            return new ServiceResponseDto<T>(false, message, data, errors);
         }
 
     }

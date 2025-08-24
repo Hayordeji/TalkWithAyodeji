@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAIClient, AIClient>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 //SignalR configuration
 builder.Services.AddSignalR(options =>
