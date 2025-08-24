@@ -47,13 +47,7 @@ namespace TalkWithAyodeji.Service.Implementation
         {
 
             try
-            {
-                //var abs_folder_path = Path.Combine(_env.WebRootPath, "uploads", "admindata");
-                //if (!Directory.Exists(abs_folder_path))
-                //{
-                //    Directory.CreateDirectory(abs_folder_path);
-                //}
-                // Create a temporary file path
+            {  
                 var tempFilePath = Path.GetTempFileName();
                 var originalFileName = ContentDispositionHeaderValue.Parse(document.ContentDisposition).FileName.Trim('"');
                 var fileExtension = Path.GetExtension(originalFileName);
@@ -61,11 +55,7 @@ namespace TalkWithAyodeji.Service.Implementation
                 {
                     return ApiResponseDto<string>.ErrorResponse("Only PDF files are accepted", default, originalFileName);
                 }
-                //var tempPath = Path.Combine(Directory.GetCurrentDirectory(), abs_folder_path);
-                //var fullPath = Path.Combine(tempFilePath, document.FileName);
-                //var dbPath = Path.Combine("uploads", "admindata", document.FileName);
-                //var convertedFileDbPath = "";
-
+              
                 using (var stream = new FileStream(tempFilePath, FileMode.Create))
                 {
                     await document.CopyToAsync(stream);
@@ -81,8 +71,7 @@ namespace TalkWithAyodeji.Service.Implementation
             {
                 return ApiResponseDto<string>.ErrorResponse("Unable to upload document", default, ex.Message);
             }
-            //stream.Close();
-            //throw new NotImplementedException();
+            
         }
     }
 }
