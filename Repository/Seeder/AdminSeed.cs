@@ -23,6 +23,7 @@ namespace TalkWithAyodeji.Repository.Seeder.Seed
             {
                 return 0;
             }
+            
             else
             {
                 //var context = scope.ServiceProvider.GetService<ApplicationDbContext>();

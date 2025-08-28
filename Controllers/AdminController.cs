@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TalkWithAyodeji.Service.Dto.Response;
@@ -11,9 +12,11 @@ namespace TalkWithAyodeji.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IDocumentService _documentService;
-        public AdminController(IDocumentService documentService)
+        private readonly IAIService _aiService;
+        public AdminController(IDocumentService documentService, IAIService aiService)
         {
             _documentService = documentService;
+            _aiService = aiService;
         }
 
 
@@ -28,6 +31,24 @@ namespace TalkWithAyodeji.Controllers
             if (!result.Success)
             {
                 return BadRequest(ApiResponseDto<string>.ErrorResponse(result.Message,default, result.Errors));
+            }
+            return Ok(result);
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> TestAI([FromQuery] string question)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _aiService.AskAI(question, "test connectionId");
+            if (!result.Success)
+            {
+                return BadRequest(ApiResponseDto<string>.ErrorResponse(result.Message, default, result.Errors));
             }
             return Ok(result);
         }

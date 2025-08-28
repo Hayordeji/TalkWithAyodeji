@@ -9,9 +9,9 @@ namespace TalkWithAyodeji.Hubs
     public class ChatHub : Hub
     {
         private readonly ILogger<ChatHub> _logger;
-        private readonly IAIClient _aiClient;
+        private readonly IAIService _aiClient;
 
-        public ChatHub(ILogger<ChatHub> logger, IAIClient aiClient)
+        public ChatHub(ILogger<ChatHub> logger, IAIService aiClient)
         {
             _logger = logger;
             _aiClient = aiClient;
