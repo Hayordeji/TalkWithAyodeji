@@ -120,14 +120,16 @@ namespace TalkWithAyodeji.Service.Implementation
         public async Task<ServiceResponseDto<string>> InitializeSystemPrompt(string data)
         {
 
-            var templatePath = Path.Combine(_env.ContentRootPath, "Service\\Helpers\\");
+            //var templatePath = Path.GetFullPath(".\\Service\\Helpers\\");
+            var templatePath = Path.Combine(_env.WebRootPath, "Service\\Helpers\\");
+
             if (string.IsNullOrEmpty(templatePath) || !Directory.Exists(templatePath))
-                throw new Exception("Template not found");
+                throw new Exception("Folder not found");
 
             var promptPath = Path.Combine(templatePath, $"GenericPrompt2.txt");
             if (!File.Exists(promptPath))
             {
-                throw new FileNotFoundException($"Template file not found: {promptPath}");
+                throw new FileNotFoundException($"System Prompt file not found: {promptPath}");
             }
             //string filePath = ".\\Service\\Helpers\\GenericPrompt2.txt";
             string fileContent = await File.ReadAllTextAsync(promptPath);

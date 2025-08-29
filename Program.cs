@@ -175,6 +175,7 @@ app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 

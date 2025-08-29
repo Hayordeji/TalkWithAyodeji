@@ -20,7 +20,7 @@ namespace TalkWithAyodeji.Controllers
         }
 
 
-        [HttpPost("/upload")]
+        [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocument(IFormFile document)
         {
             //if (!ModelState.IsValid )
@@ -36,7 +36,7 @@ namespace TalkWithAyodeji.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("ask-ai")]
         [Authorize]
         public async Task<IActionResult> TestAI([FromQuery] string question)
         {

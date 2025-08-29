@@ -40,5 +40,10 @@
     <Folder Include="Repository\Implementation\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\GenericPrompt1.txt" />
+    <None Include="wwwroot\GenericPrompt2.txt" />
+  </ItemGroup>
+
 </Project>
     
