@@ -5,11 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Qdrant.Client;
 using TalkWithAyodeji.Data.DatabaseObject;
 using TalkWithAyodeji.Hubs;
 using TalkWithAyodeji.Repository.Data;
 using TalkWithAyodeji.Repository.Seeder;
 using TalkWithAyodeji.Repository.Seeder.Seed;
+using TalkWithAyodeji.Service.Helpers;
 using TalkWithAyodeji.Service.Implementation;
 using TalkWithAyodeji.Service.Interface;
 
@@ -24,10 +28,35 @@ builder.Services.AddLogging(b => b.AddConsole().SetMinimumLevel(LogLevel.Trace))
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAIClient, AIClient>();
+builder.Services.AddScoped<IAIService, AIService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();
+builder.Services.AddScoped<IQdrantService, QdrantService>();
+builder.Services.AddScoped<IHttpClientService, HttpClientService>();
+builder.Services.AddScoped<IRedisService, RedisService>();
+builder.Services.AddKernel();
+builder.Services.AddSingleton<ChatHistory>();
+builder.Services.AddSingleton<HttpClient>();
+//builder.Services.AddSingleton<QdrantClient>();
 
+//builder.Services.AddStackExchangeRedisCache(option =>
+//{
+//    option.Configuration = builder.Configuration.GetConnectionString("Redis");
+//    option.InstanceName = "TalkToAyodejiRedis";
+
+//});
+var options = StackExchange.Redis.ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"));
+options.AbortOnConnectFail = false;
+options.ConnectRetry = 5;
+options.EndPoints.Add(builder.Configuration["Redis:Host"], 6379);
+options.ConnectTimeout = 10000;
+builder.Services.AddStackExchangeRedisCache(option =>
+{
+    option.ConfigurationOptions = options;
+    option.InstanceName = "TalkToAyodejiRedis";
+
+});
 //SignalR configuration
 builder.Services.AddSignalR(options =>
 {
@@ -38,11 +67,25 @@ builder.Services.AddSignalR(options =>
     options.HandshakeTimeout = TimeSpan.FromSeconds(15);  // Time allowed to complete the 	initial handshake
     options.MaximumParallelInvocationsPerClient = 5;  // Limit parallel client invocations
 });
+builder.Services.AddSingleton<QdrantClient>(serviceProvider =>
+{
+    var config = serviceProvider.GetRequiredService<IOptions<QdrantConfig>>().Value;
+    
+    var qdrantClient = new QdrantClient(
+              host: builder.Configuration["Qdrant:HostName"],
+              https: true,
+              apiKey: builder.Configuration["Qdrant:ApiKey"]
+            );
+
+    return qdrantClient;
+});
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         ["application/octet-stream"]);
 });
+builder.Services.AddOpenAIChatCompletion("gpt-4.1-nano-2025-04-14", builder.Configuration["OpenAI:APIKey"]);
+
 builder.Services.AddScoped<IAdminSeed,AdminSeed>();
 
 //CLOUD DATABASE
