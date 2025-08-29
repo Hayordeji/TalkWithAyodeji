@@ -41,8 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\GenericPrompt1.txt" />
-    <None Include="wwwroot\GenericPrompt2.txt" />
+    <None Include="wwwroot\Prompt\GenericPrompt1.txt" />
+    <None Include="wwwroot\Prompt\GenericPrompt2.txt" />
   </ItemGroup>
 
 </Project>

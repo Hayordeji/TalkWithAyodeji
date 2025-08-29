@@ -121,7 +121,7 @@ namespace TalkWithAyodeji.Service.Implementation
         {
 
             //var templatePath = Path.GetFullPath(".\\Service\\Helpers\\");
-            var templatePath = Path.Combine(_env.WebRootPath, "Service\\Helpers\\");
+            var templatePath = Path.Combine(_env.WebRootPath, "Prompt");
 
             if (string.IsNullOrEmpty(templatePath) || !Directory.Exists(templatePath))
                 throw new Exception("Folder not found");
