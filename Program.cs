@@ -66,11 +66,20 @@ var origins = builder.Configuration.GetSection("Origins")
 builder.Services.AddCors(c =>
 {
     c.AddPolicy("CorsPolicy",
-        builder => builder.WithOrigins(origins)
+        builder => builder.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
 });
+
+//builder.Services.AddCors(c =>
+//{
+//    c.AddPolicy("CorsPolicy",
+//        builder => builder.WithOrigins(origins)
+//        .AllowAnyMethod()
+//        .AllowAnyHeader()
+//        .AllowCredentials());
+//});
 //SignalR configuration
 builder.Services.AddSignalR(options =>
 {
@@ -193,6 +202,4 @@ app.UseStaticFiles();
 app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 app.UseCors("CorsPolicy");
-
-
 app.Run();
