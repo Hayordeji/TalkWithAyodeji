@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using TalkWithAyodeji.Service.Dto.Message;
 using TalkWithAyodeji.Service.Dto.Response;
 using TalkWithAyodeji.Service.Interface;
+using Microsoft.AspNetCore.Hosting;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
 namespace TalkWithAyodeji.Service.Implementation
 {
@@ -14,15 +16,17 @@ namespace TalkWithAyodeji.Service.Implementation
         private readonly IEmbeddingService _embeddingService;
         private readonly IRedisService _redisService;
         private readonly IQdrantService _qdrantService;
+        private readonly IHostingEnvironment _env;
         private ChatHistory? chatHistory = new();
         public AIService(IConfiguration config, IChatCompletionService chatClient, IEmbeddingService embeddingService,
-            IRedisService redisService, IQdrantService qdrantService)
+            IRedisService redisService, IQdrantService qdrantService, IHostingEnvironment env)
         {
             _config = config;
             _chatClient = chatClient;
             _embeddingService = embeddingService;
             _redisService = redisService;
             _qdrantService = qdrantService;
+            _env = env;
         }
 
         
@@ -115,8 +119,18 @@ namespace TalkWithAyodeji.Service.Implementation
 
         public async Task<ServiceResponseDto<string>> InitializeSystemPrompt(string data)
         {
-            string filePath = ".\\Service\\Helpers\\GenericPrompt2.txt";
-            string fileContent = await File.ReadAllTextAsync(filePath);
+
+            var templatePath = Path.Combine(_env.ContentRootPath, "Service\\Helpers\\");
+            if (string.IsNullOrEmpty(templatePath) || !Directory.Exists(templatePath))
+                throw new Exception("Template not found");
+
+            var promptPath = Path.Combine(templatePath, $"GenericPrompt2.txt");
+            if (!File.Exists(promptPath))
+            {
+                throw new FileNotFoundException($"Template file not found: {promptPath}");
+            }
+            //string filePath = ".\\Service\\Helpers\\GenericPrompt2.txt";
+            string fileContent = await File.ReadAllTextAsync(promptPath);
             string updatedContent = fileContent.Replace("{context}", data);
             return ServiceResponseDto<string>.SuccessResponse("Successfully fetched prompt", updatedContent);
         }
