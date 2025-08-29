@@ -115,7 +115,7 @@ namespace TalkWithAyodeji.Service.Implementation
 
         public async Task<ServiceResponseDto<string>> InitializeSystemPrompt(string data)
         {
-            string filePath = ".\\Service\\Helpers\\GenericPromptRemastered.txt";
+            string filePath = ".\\Service\\Helpers\\GenericPrompt2.txt";
             string fileContent = await File.ReadAllTextAsync(filePath);
             string updatedContent = fileContent.Replace("{context}", data);
             return ServiceResponseDto<string>.SuccessResponse("Successfully fetched prompt", updatedContent);
