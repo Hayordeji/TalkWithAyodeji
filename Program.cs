@@ -57,6 +57,20 @@ builder.Services.AddStackExchangeRedisCache(option =>
     option.InstanceName = "TalkToAyodejiRedis";
 
 });
+var origins = builder.Configuration.GetSection("Origins")
+                                   .GetChildren()
+                                   .ToArray()
+                                   .Select(x => x.Value)
+                                   .ToArray();
+
+builder.Services.AddCors(c =>
+{
+    c.AddPolicy("CorsPolicy",
+        builder => builder.WithOrigins(origins)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
 //SignalR configuration
 builder.Services.AddSignalR(options =>
 {
