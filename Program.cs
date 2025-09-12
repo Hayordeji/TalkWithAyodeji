@@ -63,23 +63,23 @@ var origins = builder.Configuration.GetSection("Origins")
                                    .Select(x => x.Value)
                                    .ToArray();
 
-builder.Services.AddCors(c =>
-{
-    c.AddPolicy("CorsPolicy",
-        builder => builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
-        //.AllowCredentials());
-});
-
 //builder.Services.AddCors(c =>
 //{
 //    c.AddPolicy("CorsPolicy",
-//        builder => builder.WithOrigins(origins)
+//        builder => builder.AllowAnyOrigin()
 //        .AllowAnyMethod()
-//        .AllowAnyHeader()
-//        .AllowCredentials());
+//        .AllowAnyHeader());
+//        //.AllowCredentials());
 //});
+
+builder.Services.AddCors(c =>
+{
+    c.AddPolicy("CorsPolicy",
+        builder => builder.WithOrigins("http://localhost:5173")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
 //SignalR configuration
 builder.Services.AddSignalR(options =>
 {

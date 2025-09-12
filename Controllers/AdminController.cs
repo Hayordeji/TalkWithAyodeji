@@ -20,6 +20,11 @@ namespace TalkWithAyodeji.Controllers
         }
 
 
+
+
+
+
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocument(IFormFile document)
         {
@@ -36,21 +41,21 @@ namespace TalkWithAyodeji.Controllers
         }
 
 
-        [HttpGet("ask-ai")]
-        [Authorize]
-        public async Task<IActionResult> TestAI([FromQuery] string question)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpGet("ask-ai")]
+        //[Authorize]
+        //public async Task<IActionResult> TestAI([FromQuery] string question)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var result = await _aiService.AskAI(question, "test connectionId");
-            if (!result.Success)
-            {
-                return BadRequest(ApiResponseDto<string>.ErrorResponse(result.Message, default, result.Errors));
-            }
-            return Ok(result);
-        }
+        //    var result = await _aiService.AskAI(question, "test connectionId");
+        //    if (!result.Success)
+        //    {
+        //        return BadRequest(ApiResponseDto<string>.ErrorResponse(result.Message, default, result.Errors));
+        //    }
+        //    return Ok(result);
+        //}
     }
 }
