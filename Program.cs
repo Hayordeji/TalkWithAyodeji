@@ -63,19 +63,12 @@ var origins = builder.Configuration.GetSection("Origins")
                                    .Select(x => x.Value)
                                    .ToArray();
 
-//builder.Services.AddCors(c =>
-//{
-//    c.AddPolicy("CorsPolicy",
-//        builder => builder.AllowAnyOrigin()
-//        .AllowAnyMethod()
-//        .AllowAnyHeader());
-//        //.AllowCredentials());
-//});
+
 
 builder.Services.AddCors(c =>
 {
     c.AddPolicy("CorsPolicy",
-        builder => builder.WithOrigins("http://localhost:5173")
+        builder => builder.WithOrigins(origins)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
