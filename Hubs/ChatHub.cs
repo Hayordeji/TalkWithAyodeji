@@ -26,7 +26,7 @@ namespace TalkWithAyodeji.Hubs
             await base.OnConnectedAsync();
         }
 
-        public async Task AskAIQuestion(string question, string chatName)
+        public async Task AskAIQuestion(string question)
         {
             //ASK AI THE QUESTION
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", question, Context.ConnectionId);
@@ -41,16 +41,16 @@ namespace TalkWithAyodeji.Hubs
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", "Ayodeji", response, "System Connection Id");
         }
 
-        public async Task SendPersonalMessage(string message)
-        {
-            string connectionId = Context.ConnectionId;
+        //public async Task SendPersonalMessage(string message)
+        //{
+        //    string connectionId = Context.ConnectionId;
 
-            await Clients.Client(connectionId).SendAsync("ReceiveMessage", message, Context.ConnectionId);
-            _logger.LogInformation($"You : {message}");
+        //    await Clients.Client(connectionId).SendAsync("ReceiveMessage", message, Context.ConnectionId);
+        //    _logger.LogInformation($"You : {message}");
 
-            //await _chatService.AddPersonalMessage(user, "ReceipientName", message);
-            //await Clients.All.SendAsync("ReceiveMessage", user, message);
-        }
+        //    //await _chatService.AddPersonalMessage(user, "ReceipientName", message);
+        //    //await Clients.All.SendAsync("ReceiveMessage", user, message);
+        //}
 
 
     }
