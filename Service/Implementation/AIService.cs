@@ -6,6 +6,7 @@ using TalkWithAyodeji.Service.Dto.Response;
 using TalkWithAyodeji.Service.Interface;
 using Microsoft.AspNetCore.Hosting;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+using Azure;
 
 namespace TalkWithAyodeji.Service.Implementation
 {
@@ -18,8 +19,9 @@ namespace TalkWithAyodeji.Service.Implementation
         private readonly IQdrantService _qdrantService;
         private readonly IHostingEnvironment _env;
         private ChatHistory? chatHistory = new();
+        private readonly ILogger<AIService> _logger;
         public AIService(IConfiguration config, IChatCompletionService chatClient, IEmbeddingService embeddingService,
-            IRedisService redisService, IQdrantService qdrantService, IHostingEnvironment env)
+            IRedisService redisService,ILogger<AIService> logger ,IQdrantService qdrantService, IHostingEnvironment env)
         {
             _config = config;
             _chatClient = chatClient;
@@ -27,6 +29,7 @@ namespace TalkWithAyodeji.Service.Implementation
             _redisService = redisService;
             _qdrantService = qdrantService;
             _env = env;
+            _logger = logger;
         }
 
         
@@ -87,6 +90,7 @@ namespace TalkWithAyodeji.Service.Implementation
                 var response = await _chatClient.GetChatMessageContentAsync(chatHistory);
                 if (response == null)
                 {
+                    _logger.LogInformation($"Something went wrong when asking AI the question.... Error{response.Content}");
                     return ServiceResponseDto<string>.ErrorResponse("Something went wrong when asking AI the question", default, response.Content);
                 }
 
@@ -113,6 +117,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while asking AI the question.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<string>.ErrorResponse("An unexpected error occured while asking AI the question", default, ex.Message);
             }
         }
@@ -124,11 +130,16 @@ namespace TalkWithAyodeji.Service.Implementation
             var templatePath = Path.Combine(_env.WebRootPath, "Prompt");
 
             if (string.IsNullOrEmpty(templatePath) || !Directory.Exists(templatePath))
+            {
+                _logger.LogInformation($"FOlder not found: {templatePath}");
                 throw new Exception("Folder not found");
+
+            }
 
             var promptPath = Path.Combine(templatePath, $"GenericPrompt2.txt");
             if (!File.Exists(promptPath))
             {
+                _logger.LogInformation($"System Prompt file not found: {promptPath}");
                 throw new FileNotFoundException($"System Prompt file not found: {promptPath}");
             }
             //string filePath = ".\\Service\\Helpers\\GenericPrompt2.txt";

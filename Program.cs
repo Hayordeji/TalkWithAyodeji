@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Qdrant.Client;
+using Serilog;
 using TalkWithAyodeji.Data.DatabaseObject;
 using TalkWithAyodeji.Hubs;
 using TalkWithAyodeji.Repository.Data;
@@ -57,6 +58,12 @@ builder.Services.AddStackExchangeRedisCache(option =>
     option.InstanceName = "TalkToAyodejiRedis";
 
 });
+Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+builder.Host.UseSerilog();
 var origins = builder.Configuration.GetSection("Origins")
                                    .GetChildren()
                                    .ToArray()

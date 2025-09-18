@@ -10,10 +10,12 @@ namespace TalkWithAyodeji.Service.Implementation
     public class EmbeddingService : IEmbeddingService
     {
         private readonly IConfiguration _config;
+        private readonly ILogger<EmbeddingService> _logger;
         private readonly IHttpClientService _httpClient;
-        public EmbeddingService(IConfiguration config, IHttpClientService httpClient)
+        public EmbeddingService(IConfiguration config,ILogger<EmbeddingService> logger ,IHttpClientService httpClient)
         {
             _config = config;
+            _logger = logger;
             _httpClient = httpClient;
         }
 
@@ -41,6 +43,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<OpenAIEmbeddingResponseDto>.ErrorResponse("An unexpected error occured while embedding",default, ex.Message);
             }
         }
@@ -79,6 +83,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<List<PointStruct>>.ErrorResponse("An unexpected error occured while creating embeddings", default, ex.Message);
             }
         }
@@ -113,6 +119,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<List<float>>.ErrorResponse("An unexpected error occured while creating embeddings", default, ex.Message);
             }
         }

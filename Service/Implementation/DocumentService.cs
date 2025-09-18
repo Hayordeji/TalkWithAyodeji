@@ -17,15 +17,18 @@ namespace TalkWithAyodeji.Service.Implementation
 {
     public class DocumentService : IDocumentService
     {
+        private readonly ILogger<DocumentService> _logger;
+
         //private readonly IWebHostEnvironment _env;
         private readonly IHttpClientService _httpClient;
         private readonly IConfiguration _config;
         //private readonly IEmbeddingService _embeddingService;
         private readonly IQdrantService _qdrantService;
 
-        public DocumentService(IWebHostEnvironment env, IHttpClientService httpClient, IConfiguration config, IEmbeddingService embeddingService
+        public DocumentService(IWebHostEnvironment env,ILogger<DocumentService> logger ,IHttpClientService httpClient, IConfiguration config, IEmbeddingService embeddingService
             , IQdrantService qdrantService)
         {
+            _logger = logger;
             //_env = env;
             _httpClient = httpClient;
             _config = config;
@@ -48,6 +51,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while chunking.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ServiceResponseDto<List<string>>.ErrorResponse("Something unexpected happened while chunking textx", default, ex.Message);
             }
@@ -87,6 +91,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while embedding the chunks.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<List<PointStruct>>.ErrorResponse("An unexpected error occured while embedding the chunks", default, ex.Message);
             }
         }
@@ -111,6 +117,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"Unable to extract text.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<string>.ErrorResponse("Unable to extract text", default, ex.Message);
             }
         }
@@ -172,6 +180,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"An unexpected error occured while uploading document.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ApiResponseDto<string>.ErrorResponse("Unable to upload document", default, ex.Message);
             }
             
