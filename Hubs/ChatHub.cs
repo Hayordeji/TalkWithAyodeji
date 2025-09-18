@@ -37,7 +37,7 @@ namespace TalkWithAyodeji.Hubs
             _logger.LogInformation($"Chatbot response: {response}");
 
             //SEND THE RESPONSE TO THE GROUP
-            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", response, "System Connection Id");
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", response.Data);
         }
 
         //public async Task SendPersonalMessage(string message)
