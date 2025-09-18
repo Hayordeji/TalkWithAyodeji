@@ -19,37 +19,31 @@ namespace TalkWithAyodeji.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            string connectionId = Context.ConnectionId; // Example: "abc123def456"
+            string connectionId = Context.ConnectionId; 
 
-            _logger.LogInformation($"User connected with ID: {connectionId}");
+            _logger.LogInformation($"A new user with connection ID : {connectionId} has connected to the chat");
             await base.OnConnectedAsync();
         }
 
         public async Task AskAIQuestion(string question)
         {
-            //ASK AI THE QUESTION
-            //await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", question, Context.ConnectionId);
-            _logger.LogInformation($"User asked the chatbot a question : {question}");
+            _logger.LogInformation($"A user asked the chatbot a question : {question}");
 
             //GET RESPONSE FROM AI
-
             var response = await _aiClient.AskAI(question, Context.ConnectionId);
-            _logger.LogInformation($"Chatbot response: {response}");
 
-            //SEND THE RESPONSE TO THE GROUP
+            //SEND THE RESPONSE TO THE CHAT
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", response.Data, response.Data.ToString());
         }
 
-        //public async Task SendPersonalMessage(string message)
-        //{
-        //    string connectionId = Context.ConnectionId;
+        public override async Task OnDisconnectedAsync(Exception ex)
+        {
+            string connectionId = Context.ConnectionId;
 
-        //    await Clients.Client(connectionId).SendAsync("ReceiveMessage", message, Context.ConnectionId);
-        //    _logger.LogInformation($"You : {message}");
-
-        //    //await _chatService.AddPersonalMessage(user, "ReceipientName", message);
-        //    //await Clients.All.SendAsync("ReceiveMessage", user, message);
-        //}
+            _logger.LogTrace($"A user has been disconnected with ID: {connectionId}");
+            await base.OnDisconnectedAsync(ex);
+        }
+        
 
 
     }

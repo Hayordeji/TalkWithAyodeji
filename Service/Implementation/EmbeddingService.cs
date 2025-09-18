@@ -43,7 +43,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+                _logger.LogError($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ServiceResponseDto<OpenAIEmbeddingResponseDto>.ErrorResponse("An unexpected error occured while embedding",default, ex.Message);
             }
@@ -83,7 +83,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+                _logger.LogError($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ServiceResponseDto<List<PointStruct>>.ErrorResponse("An unexpected error occured while creating embeddings", default, ex.Message);
             }
@@ -119,7 +119,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+                _logger.LogError($"An unexpected error occured while embedding.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ServiceResponseDto<List<float>>.ErrorResponse("An unexpected error occured while creating embeddings", default, ex.Message);
             }

@@ -9,11 +9,13 @@ namespace TalkWithAyodeji.Service.Implementation
     public class QdrantService : IQdrantService
     {
         private readonly QdrantClient _client;
+        private readonly ILogger<QdrantService> _logger;
         private readonly IEmbeddingService _embeddingService;
         private readonly IConfiguration _config;
-        public QdrantService(QdrantClient client ,IEmbeddingService embeddingService, IConfiguration config)
+        public QdrantService(QdrantClient client,ILogger<QdrantService> logger ,IEmbeddingService embeddingService, IConfiguration config)
         {
             _client = client;
+            _logger = logger;
             _embeddingService = embeddingService;
             //_client = new QdrantClient(
             //  host: $"{_config["Qdrant:Host"]}",
@@ -36,6 +38,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"An unexpected error occured while adding vectors to collection.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<bool>.ErrorResponse($"An unexpected error occured while trying to add vectors to collection with name : {collectionName}", false, ex.Message);
             }
 
@@ -55,6 +59,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"An unexpected error occured while creating collection.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<bool>.ErrorResponse($"An unexpected error occured while trying to create collection with name : {collectionName}", false, ex.Message);
             }
         }
@@ -70,6 +76,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"An unexpected error occured while deleting collection.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
                 return ServiceResponseDto<bool>.ErrorResponse($"An unexpected error occured while trying to delete collection with name : {collectionName}", false, ex.Message);
             }
         }
@@ -98,6 +105,8 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError($"An unexpected error occured while searching for vectors in collection.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+
                 return ServiceResponseDto<List<string>>.ErrorResponse($"An unexpected error occured while trying to fetch vectors for collection with name : {collectionName}", default, ex.Message);
             }
         }

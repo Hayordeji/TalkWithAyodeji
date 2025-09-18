@@ -90,7 +90,7 @@ namespace TalkWithAyodeji.Service.Implementation
                 var response = await _chatClient.GetChatMessageContentAsync(chatHistory);
                 if (response == null)
                 {
-                    _logger.LogInformation($"Something went wrong when asking AI the question.... Error{response.Content}");
+                    _logger.LogError($"Something went wrong when asking AI the question.... Error{response.Content}");
                     return ServiceResponseDto<string>.ErrorResponse("Something went wrong when asking AI the question", default, response.Content);
                 }
 
@@ -117,7 +117,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"An unexpected error occured while asking AI the question.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+                _logger.LogError($"An unexpected error occured while asking AI the question.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ServiceResponseDto<string>.ErrorResponse("An unexpected error occured while asking AI the question", default, ex.Message);
             }
@@ -131,7 +131,7 @@ namespace TalkWithAyodeji.Service.Implementation
 
             if (string.IsNullOrEmpty(templatePath) || !Directory.Exists(templatePath))
             {
-                _logger.LogInformation($"FOlder not found: {templatePath}");
+                _logger.LogError($"FOlder not found: {templatePath}");
                 throw new Exception("Folder not found");
 
             }
@@ -139,7 +139,7 @@ namespace TalkWithAyodeji.Service.Implementation
             var promptPath = Path.Combine(templatePath, $"GenericPrompt2.txt");
             if (!File.Exists(promptPath))
             {
-                _logger.LogInformation($"System Prompt file not found: {promptPath}");
+                _logger.LogError($"System Prompt file not found: {promptPath}");
                 throw new FileNotFoundException($"System Prompt file not found: {promptPath}");
             }
             //string filePath = ".\\Service\\Helpers\\GenericPrompt2.txt";

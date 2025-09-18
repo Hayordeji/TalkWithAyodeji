@@ -51,7 +51,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"An unexpected error occured while chunking.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+                _logger.LogError($"An unexpected error occured while chunking.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ServiceResponseDto<List<string>>.ErrorResponse("Something unexpected happened while chunking textx", default, ex.Message);
             }
@@ -180,7 +180,7 @@ namespace TalkWithAyodeji.Service.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"An unexpected error occured while uploading document.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
+                _logger.LogError($"An unexpected error occured while uploading document.... Error : {ex.Message}.... StackTrace : {ex.StackTrace}");
 
                 return ApiResponseDto<string>.ErrorResponse("Unable to upload document", default, ex.Message);
             }
