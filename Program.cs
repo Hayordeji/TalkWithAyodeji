@@ -1,3 +1,6 @@
+using Hangfire;
+using Hangfire.PostgreSql;
+using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -17,6 +20,7 @@ using TalkWithAyodeji.Repository.Seeder.Seed;
 using TalkWithAyodeji.Service.Helpers;
 using TalkWithAyodeji.Service.Implementation;
 using TalkWithAyodeji.Service.Interface;
+using BackgroundService = TalkWithAyodeji.Service.Implementation.BackgroundService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +40,8 @@ builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();
 builder.Services.AddScoped<IQdrantService, QdrantService>();
 builder.Services.AddScoped<IHttpClientService, HttpClientService>();
 builder.Services.AddScoped<IRedisService, RedisService>();
+builder.Services.AddScoped<IBackgroundService, BackgroundService>();
+
 builder.Services.AddKernel();
 builder.Services.AddSingleton<ChatHistory>();
 builder.Services.AddSingleton<HttpClient>();
@@ -102,6 +108,21 @@ builder.Services.AddSingleton<QdrantClient>(serviceProvider =>
 
     return qdrantClient;
 });
+
+//HANGFIR FOR BACKGROUND JOB
+builder.Services.AddHangfire(config =>
+{
+    config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(options =>
+    {
+        options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Postgres"));
+    });
+});
+builder.Services.AddHangfireServer();
+
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -187,12 +208,32 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseHttpsRedirection();
 }
+app.UseHangfireDashboard();
+app.MapHangfireDashboard("/hangfire", new DashboardOptions()
+{
+    DashboardTitle = "Talk with Ayodeji Dashboard",
+    Authorization = new[]
+     {
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = builder.Configuration.GetValue<string>("HangfireCredentials:User"),
+            Pass = builder.Configuration.GetValue<string>("HangfireCredentials:Pass")
+        }
+     }
+});
+
 using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;
+    //ACTIVATE SEEDER
     var userSeeder = services.GetRequiredService<IAdminSeed>();
     await userSeeder.AddDefaultAdmin();
+
+    //ACTIVATE BACKGROUND JOB
+    var datasync = services.GetService<IBackgroundService>();
+    await datasync.KeepServerActive();
 }
+
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
