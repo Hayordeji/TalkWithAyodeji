@@ -43,6 +43,8 @@ namespace TalkWithAyodeji.Controllers
         }
 
 
+
+
         [HttpGet("ask-ai")]
         [Authorize]
         public async Task<IActionResult> TestAI([FromQuery] string question)
