@@ -3,6 +3,7 @@ using Hangfire.PostgreSql;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -109,6 +110,36 @@ builder.Services.AddSingleton<QdrantClient>(serviceProvider =>
     return qdrantClient;
 });
 
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+    rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
+    {
+        options.PermitLimit = 10;
+        options.Window = TimeSpan.FromMinutes(1);
+        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
+    });
+
+    rateLimiterOptions.AddSlidingWindowLimiter("sliding", options =>
+    {
+        options.PermitLimit = 30;
+        options.Window = TimeSpan.FromMinutes(1);
+        options.SegmentsPerWindow = 6;
+        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
+    });
+
+    rateLimiterOptions.AddTokenBucketLimiter("token", options =>
+    {
+        options.TokenLimit = 100;
+        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
+        options.ReplenishmentPeriod = TimeSpan.FromMinutes(1);
+        options.TokensPerPeriod = 30;
+        options.AutoReplenishment = true;
+    });
+});
 //HANGFIR FOR BACKGROUND JOB
 builder.Services.AddHangfire(config =>
 {
@@ -240,6 +271,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
+app.UseRateLimiter();
 app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 app.UseCors("CorsPolicy");

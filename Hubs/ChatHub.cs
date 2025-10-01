@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 using TalkWithAyodeji.Data.DatabaseObject;
 using TalkWithAyodeji.Service;
@@ -6,6 +7,7 @@ using TalkWithAyodeji.Service.Interface;
 
 namespace TalkWithAyodeji.Hubs
 {
+    [EnableRateLimiting("token")]
     public class ChatHub : Hub
     {
         private readonly ILogger<ChatHub> _logger;
