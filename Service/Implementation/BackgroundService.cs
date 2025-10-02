@@ -40,10 +40,7 @@ namespace TalkWithAyodeji.Service.Implementation
         {
             _logger.LogInformation("Background job has started");
 
-            //CLOUD DATABASE
-            await _context.Messages.AnyAsync();
-
-            //QDRANT DATABASE
+            bool isExist = await _context.Users.AnyAsync();
             await _qdrantService.CreateCollection("Test", 1);
             await _qdrantService.DeleteCollection("Test");
 

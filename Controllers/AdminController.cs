@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TalkWithAyodeji.Service.Dto.Response;
 using TalkWithAyodeji.Service.Interface;
@@ -25,7 +26,7 @@ namespace TalkWithAyodeji.Controllers
 
 
 
-
+        [EnableRateLimiting("fixed")]
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocument(IFormFile document)
         {
