@@ -42,7 +42,11 @@ namespace TalkWithAyodeji.Controllers
             return Ok(result);
         }
 
-
+        [HttpGet("keep-alive")]
+        public IActionResult KeepAlive()
+        {
+            return Ok(new { message = "Server is alive", timestamp = DateTime.UtcNow });
+        }
 
 
         [HttpGet("ask-ai")]

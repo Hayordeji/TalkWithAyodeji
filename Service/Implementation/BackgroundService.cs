@@ -10,12 +10,14 @@ namespace TalkWithAyodeji.Service.Implementation
         private readonly ApplicationDbContext _context;
         private readonly ILogger<BackgroundService> _logger;
         private readonly IQdrantService _qdrantService;
+        private readonly IHttpClientService _httpClientService;
 
-        public BackgroundService(ApplicationDbContext context,ILogger<BackgroundService> logger, IQdrantService qdrantService)
+        public BackgroundService(ApplicationDbContext context, IHttpClientService httpClientService, ILogger<BackgroundService> logger, IQdrantService qdrantService)
         {
             _context = context;
             _logger = logger;
             _qdrantService = qdrantService;
+            _httpClientService = httpClientService;
         }
         public async Task KeepServerActive()
         {
@@ -38,9 +40,16 @@ namespace TalkWithAyodeji.Service.Implementation
         {
             _logger.LogInformation("Background job has started");
 
+            //CLOUD DATABASE
             await _context.Messages.AnyAsync();
+
+            //QDRANT DATABASE
             await _qdrantService.CreateCollection("Test", 1);
             await _qdrantService.DeleteCollection("Test");
+
+            //PING THE API
+            await _httpClientService.GetAsync("https://talkwithayodeji.onrender.com/api/admin/keep-alive");
+
             await Task.CompletedTask;
 
             _logger.LogInformation("Background job has ended");
