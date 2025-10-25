@@ -25,7 +25,7 @@ namespace TalkWithAyodeji.Service.Implementation
             RecurringJob.AddOrUpdate<BackgroundService>(
                   recurringJobId: $"Keep Server Active",
                   methodCall: service => service.KeepActivity(),
-                  cronExpression: "0/ 5* * * *",
+                  cronExpression: "0/5 * * * *",
                   options: new RecurringJobOptions
                   {
                       TimeZone = TimeZoneInfo.Utc,
