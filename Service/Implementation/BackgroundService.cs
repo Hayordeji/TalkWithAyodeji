@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using TalkWithAyodeji.Repository.Data;
+using TalkWithAyodeji.Service.Dto.Response;
 using TalkWithAyodeji.Service.Interface;
 
 namespace TalkWithAyodeji.Service.Implementation
@@ -24,7 +25,7 @@ namespace TalkWithAyodeji.Service.Implementation
             RecurringJob.AddOrUpdate<BackgroundService>(
                   recurringJobId: $"Keep Server Active",
                   methodCall: service => service.KeepActivity(),
-                  cronExpression: "0/14 * * * *",
+                  cronExpression: "0/1 * * * *",
                   options: new RecurringJobOptions
                   {
                       TimeZone = TimeZoneInfo.Utc,
@@ -38,18 +39,19 @@ namespace TalkWithAyodeji.Service.Implementation
 
         public async Task KeepActivity()
         {
-            _logger.LogInformation("Background job has started");
-
+            _logger.LogInformation("Postgres background job has started......");
+            //CHECK HEALTH FOR DATABASE
             bool isExist = await _context.Users.AnyAsync();
-            await _qdrantService.CreateCollection("Test", 1);
-            await _qdrantService.DeleteCollection("Test");
+            _logger.LogInformation("Qdrant background job has started......");
 
+            //CHECK HEALTH FOR QDRANT   
+            await _qdrantService.CheckHealth();
+            _logger.LogInformation("Controller background job has started......");
             //PING THE API
             await _httpClientService.GetAsync("https://talkwithayodeji.onrender.com/api/admin/keep-alive");
-
             await Task.CompletedTask;
 
-            _logger.LogInformation("Background job has ended");
+            _logger.LogInformation("Background job has ended.......");
 
         }
 

@@ -45,6 +45,26 @@ namespace TalkWithAyodeji.Service.Implementation
 
         }
 
+        public async Task CheckHealth()
+        {
+            try
+            {
+                var isExist = await _client.CollectionExistsAsync("TalkWithAyodeji");
+                if (isExist)
+                {
+                    _logger.LogInformation("Qdrant is Healthy");
+                }
+                else
+                {
+                    _logger.LogError("Collection not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"An unexpected error occured... More details : {ex.Message} ");
+            }
+        }
+
         public async Task<ServiceResponseDto<bool>> CreateCollection(string collectionName, uint vectorSize)
         {
             try

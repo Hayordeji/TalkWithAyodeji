@@ -22,10 +22,6 @@ namespace TalkWithAyodeji.Controllers
             _aiService = aiService;
         }
 
-
-
-
-
         [EnableRateLimiting("fixed")]
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocument(IFormFile document)
@@ -46,6 +42,7 @@ namespace TalkWithAyodeji.Controllers
         [HttpGet("keep-alive")]
         public IActionResult KeepAlive()
         {
+            _logger.LogInformation("Server is alive....");
             return Ok(new { message = "Server is alive", timestamp = DateTime.UtcNow });
         }
 
