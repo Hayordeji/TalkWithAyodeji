@@ -22,7 +22,7 @@ namespace TalkWithAyodeji.Service.Implementation
         //private readonly IWebHostEnvironment _env;
         private readonly IHttpClientService _httpClient;
         private readonly IConfiguration _config;
-        //private readonly IEmbeddingService _embeddingService;
+        private readonly IEmbeddingService _embeddingService;
         private readonly IQdrantService _qdrantService;
 
         public DocumentService(IWebHostEnvironment env,ILogger<DocumentService> logger ,IHttpClientService httpClient, IConfiguration config, IEmbeddingService embeddingService
@@ -32,7 +32,7 @@ namespace TalkWithAyodeji.Service.Implementation
             //_env = env;
             _httpClient = httpClient;
             _config = config;
-            //_embeddingService = embeddingService;
+            _embeddingService = embeddingService;
             _qdrantService = qdrantService;
         }
 
@@ -61,32 +61,10 @@ namespace TalkWithAyodeji.Service.Implementation
         {
             try
             {
-                List<PointStruct> points = new List<PointStruct>();
-                foreach (string text in texts)
-                {
+                //List<PointStruct> points = new List<PointStruct>();
+                var embeddings = await _embeddingService.CreateEmbeddings(texts,dimensions);
 
-                    //CREATE TEH REQUEST BODY
-                    var data = new EmbeddingCreateDto()
-                    {
-                        input = text,
-                        model = "text-embedding-3-small",
-                        dimensions = dimensions
-                    };
-
-                    //SET THE AUTHORIZATION HEADER
-                    _httpClient.SetAuthorizationHeader("bearer", $"{_config["OpenAI:APIKey"]}");
-                    var response = await _httpClient.PostAsync<EmbeddingCreateDto>("https://api.openai.com/v1/embeddings", data);
-                    response.EnsureSuccessStatusCode();
-
-                    //READ THE RESPONSE CONTENT
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var deserializedReponse = JsonConvert.DeserializeObject<OpenAIEmbeddingResponseDto>(responseContent);
-
-                    var embedding = deserializedReponse.ToEmbeddingStoreDto(text);
-                    points.Add(embedding);
-                }
-
-                return ServiceResponseDto<List<PointStruct>>.SuccessResponse("Successfully completed chunk embeddings", points);
+                return ServiceResponseDto<List<PointStruct>>.SuccessResponse("Successfully completed chunk embeddings", embeddings.Data);
 
             }
             catch (Exception ex)
@@ -128,6 +106,7 @@ namespace TalkWithAyodeji.Service.Implementation
 
             try
             {
+                _logger.LogInformation("Starting Document Upload Opertaions....");
                 string collectionName = "TalkWithAyodeji";
                 var tempFilePath = Path.GetTempFileName();
                 var originalFileName = ContentDispositionHeaderValue.Parse(document.ContentDisposition).FileName.Trim('"');
@@ -141,21 +120,29 @@ namespace TalkWithAyodeji.Service.Implementation
                 {
                     await document.CopyToAsync(stream);
                 };
+
+                _logger.LogInformation("1/5......Extracting texts from document....");
                 var extractedText = await ExtractText(tempFilePath);
                 if (extractedText.Success)
                 {
+
+                    _logger.LogInformation("2/5......Chunking texts....");
                     //CHUNK TEXT
                     var chunks = await ChunkText(extractedText.Data);
                     if (!chunks.Success)
                     {
                         return ApiResponseDto<string>.ErrorResponse(chunks.Message,default, chunks.Errors);
                     }
+
+                    _logger.LogInformation("3/5......Creating Embeddings....");
                     //EMBED CHUNKS
                     var embeddings = await CreateEmbeddings(chunks.Data, 64);
                     if (!embeddings.Success)
                     {
                         return ApiResponseDto<string>.ErrorResponse(embeddings.Message, default, embeddings.Errors);
                     }
+
+                    _logger.LogInformation("4/5......Making sure collection is intact....");
                     //DELETE COLLECTION
                     var deleteCollection = await _qdrantService.DeleteCollection(collectionName);
                     if (!deleteCollection.Success)
@@ -167,14 +154,17 @@ namespace TalkWithAyodeji.Service.Implementation
                     if (!createCollection.Success)
                     {
                         return ApiResponseDto<string>.ErrorResponse(createCollection.Message, default, createCollection.Errors);
+
                     }
+
+                    _logger.LogInformation("5/5......Storing vectors in database....");
                     //STORE CHUNKS IN VECTOR COLLECTION
                     var isStored = await _qdrantService.AddVectorsToCollection(collectionName,embeddings.Data);
                     if (!isStored.Success)
                     {
                         return ApiResponseDto<string>.ErrorResponse(isStored.Message, default, isStored.Errors);
                     }
-                    return ApiResponseDto<string>.SuccessResponse("Successfully uploaded document", "Don't worry, it worked");
+                    return ApiResponseDto<string>.SuccessResponse("Successfully uploaded document", default);
                 }
                 return ApiResponseDto<string>.ErrorResponse("Unable to upload document", default, extractedText.Message);
             }

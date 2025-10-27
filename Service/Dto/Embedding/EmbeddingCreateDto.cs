@@ -4,6 +4,6 @@
     {
         public string input { get; set; }
         public string model { get; set; }
-        public int dimensions { get; set; }
+        //public int dimensions { get; set; }
     }
 }

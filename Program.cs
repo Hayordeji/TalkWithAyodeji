@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using OpenAI;
 using Qdrant.Client;
 using Serilog;
 using TalkWithAyodeji.Data.DatabaseObject;
@@ -21,6 +22,7 @@ using TalkWithAyodeji.Repository.Seeder.Seed;
 using TalkWithAyodeji.Service.Helpers;
 using TalkWithAyodeji.Service.Implementation;
 using TalkWithAyodeji.Service.Interface;
+using tryAGI.OpenAI;
 using BackgroundService = TalkWithAyodeji.Service.Implementation.BackgroundService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -110,6 +112,21 @@ builder.Services.AddSingleton<QdrantClient>(serviceProvider =>
     return qdrantClient;
 });
 
+string openAIKey = builder.Configuration["OpenAI:APIKey"];
+var AIclient = new OpenAIClient(openAIKey);
+builder.Services.AddSingleton<OpenAIClient>(client =>
+{
+    return AIclient;
+});
+
+
+var Aiclient = new OpenAiClient(openAIKey);
+builder.Services.AddSingleton<OpenAiClient>(client =>
+{
+    return Aiclient;
+});
+
+
 builder.Services.AddRateLimiter(rateLimiterOptions =>
 {
     rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -160,6 +177,7 @@ builder.Services.AddResponseCompression(opts =>
         ["application/octet-stream"]);
 });
 builder.Services.AddOpenAIChatCompletion("gpt-4.1-nano-2025-04-14", builder.Configuration["OpenAI:APIKey"]);
+//builder.Services.AddOpenAIEmbeddingGenerator("text-embedding-3-small",AIclient);
 
 builder.Services.AddScoped<IAdminSeed,AdminSeed>();
 

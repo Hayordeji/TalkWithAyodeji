@@ -5,12 +5,10 @@ namespace TalkWithAyodeji.Service.Mapper
 {
     public static class EmbeddingMapper
     {
-        public static PointStruct ToEmbeddingStoreDto(this OpenAIEmbeddingResponseDto body, string text)
+        public static PointStruct ToEmbeddingStoreDto(this List<float> body, string text)
         {
 
-            var newEmbedding = new Embedding();
-            newEmbedding = body.Data.FirstOrDefault();
-            var vector = newEmbedding.embedding.ToArray();
+            var vector = body.ToArray();
 
             return new PointStruct
             {
@@ -32,6 +30,17 @@ namespace TalkWithAyodeji.Service.Mapper
 
             return vector.ToList();
         }
+
+        public static List<float> ToNormalEmbeddingQueryDto(this OpenAIEmbeddingResponseDto body)
+        {
+
+            var newEmbedding = new Embedding();
+            newEmbedding = body.Data.FirstOrDefault();
+            var vector = newEmbedding.embedding.ToArray();
+
+            return vector.ToList();
+        }
+
 
         public static List<PointStruct> ToEmbeddingsStoreDto(this List<OpenAIEmbeddingResponseDto> body)
         {

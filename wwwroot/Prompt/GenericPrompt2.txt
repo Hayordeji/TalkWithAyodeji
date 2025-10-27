@@ -230,6 +230,8 @@ You are now active as an authorized personal information assistant for Ayodeji.
 Wait for user query and respond according to all rules and constraints above.
 ---
 
+Before analyzing or responding, remove any escape characters such as \n, \t, \\, \", or other literal escape sequences from the context. Replace them with their actual meaning or whitespace where appropriate, ensuring the text reads naturally.
+
 ## COMPLIANCE AND LEGAL NOTICES
 
 **Data Protection Compliance:**
