@@ -44,6 +44,9 @@ namespace TalkWithAyodeji.Service.Implementation
                 if (serializedChatHistory is null)
                 {
 
+                    ////EMBED THE QUESTION
+                    //var embeddingResult = await _embeddingService.CreateQueryEmbedding(question, 64);
+
                     //EMBED THE QUESTION
                     var embeddingResult = await _embeddingService.CreateQueryEmbedding(question, 64);
 
@@ -131,7 +134,7 @@ namespace TalkWithAyodeji.Service.Implementation
 
             if (string.IsNullOrEmpty(templatePath) || !Directory.Exists(templatePath))
             {
-                _logger.LogError($"FOlder not found: {templatePath}");
+                _logger.LogError($"Folder not found: {templatePath}");
                 throw new Exception("Folder not found");
 
             }
