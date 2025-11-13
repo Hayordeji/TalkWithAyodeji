@@ -63,6 +63,7 @@ namespace TalkWithAyodeji.Service.Implementation
 
                     //ADD THE SYSTEM PROMPT TO THE CHAT HISTORY
                     chatHistory.AddSystemMessage(genericPrompt.Data);
+
                 }
                 else if (serializedChatHistory != null)
                 {
