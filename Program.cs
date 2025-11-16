@@ -169,7 +169,10 @@ builder.Services.AddHangfire(config =>
         options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Postgres"));
     });
 });
-builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer( options =>
+{
+    options.WorkerCount = 2;
+});
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -282,6 +285,8 @@ using (var serviceScope = app.Services.CreateScope())
     var datasync = services.GetService<IBackgroundService>();
     await datasync.KeepServerActive();
 }
+
+
 
 
 app.UseResponseCompression();
