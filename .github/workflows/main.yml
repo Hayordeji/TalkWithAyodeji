@@ -1,0 +1,53 @@
+name: CI/CD Workflow
+on :
+  push:  
+      branches: ['master']
+env:
+  SeriLog_MinimumLevel_Default: "Information"
+  SeriLog_MinimumLevel_Override_Microsoft: "Information"
+  SeriLog_MinimumLevel_Override_System": "Warning"
+  Qdrant_APIKey: ${{secrets.QDRANT_APIKEY}}
+  Qdrant_HostName: ${{secrets.QDRANT_HOSTNAME}}
+  AdminDetails_Username: "Molefox"
+  AdminDetails_Password: "Superman4ev@"
+  AdminDetails_Email: "Molefox6@gmail.com"
+  Redis_Host: "virginia-keyvalue.render.com"
+  Redis_Password: ${{secrets.REDIS_PASSWORD}}
+  Redis_Port: "6379"
+  JWT_Issuer: "http://localhost:5273"
+  JWT_Audience: "http://localhost:5273"
+  JWT_SigningKey: ${{secrets.JWT_SIGNINGKEY}}
+  Origins_Localhost": "http://localhost:5173"
+  Origins_Vercel": "https://talk-with-ayodeji.vercel.app"
+  Hangfire": "Information"
+  HangFireCredentials_Username: ${{secrets.HANGFIRE_USERNAME}}
+  HangFireCredentials_Password": ${{secrets.HANGFIRE_PASSWORD}}
+  ConnectionStrings_Redis: ${{secrets.CONNECTION_STRING_REDIS}}
+  ConnectionStrings_Postgres: ${{secrets.CONNECTION_STRING_POSTGRES}}
+  OpenAI_APIKey: ${{secrets.OPENAI_KEY}}
+  AllowedHosts: "*"
+
+jobs:      
+  push_to_registry:
+    name: Push dockerfile to docker hub
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with: 
+              dotnet-version: 8.0.x
+      - name: Install Dependencies
+        run: dotnet restore ./Console
+
+      - name: Build Application
+        run: dotnet build ./Console --configuration Release --no-restore
+
+      - name: Publish Application
+        run: dotnet publish ./Console --configuration Release --output ./Publish   
+        
+    
+         
