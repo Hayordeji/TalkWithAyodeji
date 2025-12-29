@@ -41,13 +41,13 @@ jobs:
         with: 
               dotnet-version: 8.0.x
       - name: Install Dependencies
-        run: dotnet restore ./TalkWithAyodeji
+        run: dotnet restore ./TalkWithAyodeji.csproj
 
       - name: Build Application
-        run: dotnet build ./TalkWithAyodeji --configuration Release --no-restore
+        run: dotnet build ./TalkWithAyodeji.csproj --configuration Release --no-restore
 
       - name: Publish Application
-        run: dotnet publish ./TalkWithAyodeji --configuration Release --output ./Publish   
+        run: dotnet publish ./TalkWithAyodeji.csproj --configuration Release --output ./Publish   
         
     
          
